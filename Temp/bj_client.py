@@ -3,7 +3,7 @@ from pgu import gui
 import pygame
 import threading
 import websocket
-import json
+from client.ws_events import *
 
 RESX = 600
 RESY = 400
@@ -20,13 +20,15 @@ CONNECT_SUCCESS = False
 
 def on_message(ws, message):
     print(type(message))
+    print(message)
     if message != 'Sorry':
         win._quit = True
         main_thread.start()
         login = input_login.value
-        message = {"login": login}
+        # message = {"login": login}
+        message = "login"
         # message = "Exit"
-        ws.send(json.dumps(message))
+        # ws.send(json.dumps(message))
         ws.send(message)
     else:
         input_error.value = message
@@ -126,7 +128,7 @@ def main():
         pygame.display.flip()
 
 # Так надо
-ws = websocket.WebSocketApp("ws://127.0.1.1:8888/websocket", on_message=on_message)
+ws = websocket.WebSocketApp("ws://127.0.1.1:8888/websocket", on_data=on_data, on_error=on_errors)
 # init threads
 ws_thread = threading.Thread(target=ws.run_forever)
 main_thread = threading.Thread(target=main)
