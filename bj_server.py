@@ -17,9 +17,8 @@ class Application(tornado.web.Application):
         tornado.web.Application.__init__(self, handlers)
 
 
-application = Application()
-
 if __name__ == "__main__":
+    application = Application()
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(8888)
     myIP = socket.gethostbyname(socket.gethostname())
