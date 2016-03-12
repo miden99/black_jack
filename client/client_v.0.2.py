@@ -1,5 +1,7 @@
-import pygame
 import json
+
+import pygame
+
 # from pgu import gui
 import threading
 import websocket
@@ -7,7 +9,9 @@ from client.Classes.PyMain import PyMain
 from client.Classes.LoginForm import LoginForm
 from client.Classes.ConnectForm import ConnectForm
 from client.Classes.TestMessageForm import TestMessageForm
+from Temp.SelectForm import SelectForm
 from client.ws_events import *
+
 
 def on_data(cls, data, opcode, fin):
     # TODO: добавить обработку ошибок при некорректной data
@@ -33,9 +37,11 @@ if __name__ == "__main__":
     login_form = LoginForm((20, 20), main_window.screen, ws=ws)
     connect_form = ConnectForm((20, 20), main_window.screen, ws=ws)
     tm_form = TestMessageForm((20, 150), main_window.screen, ws=ws)
+    select_form = SelectForm((120, 150), main_window.screen)
     main_window.add_render_object(login_form)
     main_window.add_render_object(connect_form)
     main_window.add_render_object(tm_form)
+    main_window.add_render_object(select_form)
     main_thread = threading.Thread(target=main_window.loop)
 
     main_thread.start()

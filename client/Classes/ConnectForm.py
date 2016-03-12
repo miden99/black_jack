@@ -6,7 +6,7 @@ from ..ws_events import *
 
 
 class ConnectForm(GUIWrapper):
-    size = (200, 200)
+    size = (200, 100)
 
     def __init__(self, pos, screen, ws):
         # Веб-сокет
@@ -14,7 +14,9 @@ class ConnectForm(GUIWrapper):
         GUIWrapper.__init__(self, pos, screen)
 
     def create_components(self):
-        self.info_text = gui.Label("...")
+        self.info_text = gui.Label(".....................................")
+        self.info_text.style.width = 200
+        self.info_text.style.height = 400
         button_connect = gui.Button('Connect')
         button_connect.connect(gui.CLICK, self.connect, '')
         table = gui.Table()

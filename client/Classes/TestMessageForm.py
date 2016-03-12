@@ -5,7 +5,7 @@ import json
 
 
 class TestMessageForm(GUIWrapper):
-    size = (200, 50)
+    size = (300, 100)
     visible = True
 
     def __init__(self, pos, screen, ws):

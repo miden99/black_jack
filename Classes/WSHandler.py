@@ -32,7 +32,7 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
         if message.get("type") == "auth":
             self.authorization(message["data"])
         else:
-            if not self.username:
+            if self.username is None:
                 self.send_error(status_code=401, message='не авторизован')
         # for value in self.application.webSocketsPool:
         #     if value != self:
@@ -41,6 +41,9 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
 
     def send_error(self, status_code=500, message=''):
         self.ws_connection.write_message(json_encode({"type": "error", "status_code": status_code, "message": message}))
+
+    def send_message(self, message):
+        self.ws_connection.write_message(json_encode(message))
 
     def on_close(self):
         """

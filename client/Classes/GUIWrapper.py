@@ -10,11 +10,11 @@ class GUIWrapper:
     def __init__(self, pos, screen):
         self.app = app = gui.App()
         # Область отображения объекта
-        rect = pygame.Rect((pos, self.size))
+        self.rect = pygame.Rect((pos, self.size))
         # Виджет для размещения компонентов
         self.pack_manager = None
         self.create_components()
-        app.init(widget=self.pack_manager, screen=screen, area=rect)
+        app.init(widget=self.pack_manager, screen=screen, area=self.rect)
 
     def create_components(self):
         # Создайте компоненты тут
@@ -31,7 +31,7 @@ class GUIWrapper:
         pass
 
     def render(self, screen):
-        # pygame.draw.rect(screen, (0, 200, 0), self.rect, 2)
         if not self.visible:
             return
+        pygame.draw.rect(screen, (0, 200, 0), self.rect, 2)
         self.app.paint()
