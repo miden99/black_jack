@@ -1,6 +1,7 @@
 import tornado.websocket
 from tornado.escape import json_encode, json_decode
 from Classes.Client import Client
+import random
 
 
 # Список кодов состояния HTTP:
@@ -23,12 +24,21 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
         Вызывается при получении сообщения от клиента
         """
         print(self.application.webSocketsPool)
+
         try:
             message = json_decode(message)
         except ValueError:
             self.send_error(status_code=400, message='data not json')
             return
         print("message --> :", message)
+        if message.get('type') == 'hit':
+            ranks = "23456789tjqka"
+            suits = "dchs"
+            cards = [(s, r) for r in ranks for s in suits]
+            random.shuffle(cards)
+            card_name = str(cards[-1][0] + cards[-1][1])
+            self.send_message({"type": "hit", "message": card_name})
+
         if message.get("type") == "auth":
             self.authorization(message["data"])
         else:
@@ -43,7 +53,8 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
         self.ws_connection.write_message(json_encode({"type": "error", "status_code": status_code, "message": message}))
 
     def send_message(self, message):
-        self.ws_connection.write_message(json_encode(message))
+        for el in self.application.webSocketsPool:
+            el.ws_connection.write_message(json_encode(message))
 
     def on_close(self):
         """

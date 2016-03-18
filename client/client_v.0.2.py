@@ -19,7 +19,7 @@ def on_data(cls, data, opcode, fin):
     # print("data = ", data)
     if data.get("type") == "error":
         on_errors('', data)
-    custom_event = pygame.event.Event(WS_MESSAGE, data=data)
+    custom_event = pygame.event.Event(WS_MESSAGE, data=data, test=0)
     pygame.event.post(custom_event)
 
 
