@@ -6,7 +6,7 @@ import json
 
 class LoginForm(GUIWrapper):
     size = (200, 200)
-    visible = True
+    visible = False
 
     def __init__(self, pos, screen, ws):
         # Веб-сокет
