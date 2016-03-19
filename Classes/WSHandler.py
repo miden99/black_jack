@@ -13,8 +13,7 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
         """
         print('new connection')
         if len(self.application.webSocketsPool) < 2:
-
-            self.application.webSocketsPool.append(self)
+            self.application.webSocketsPool.append({len(self.application.webSocketsPool): self})
             self.authorization()
         else:
             self.send_error(status_code=507, message='all busy')
