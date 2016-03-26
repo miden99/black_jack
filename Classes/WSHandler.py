@@ -13,7 +13,13 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
         """
         print('new connection')
         if len(self.application.webSocketsPool) < 2:
-            self.application.webSocketsPool.append({len(self.application.webSocketsPool): self})
+            # self.id
+            # length = len(self.application.webSocketsPool)
+            if self.application.webSocketsPool:
+                self.id = self.application.webSocketsPool[-1].id + 1
+            else:
+                self.id = 1
+            self.application.webSocketsPool.append(self)
             self.authorization()
         else:
             self.send_error(status_code=507, message='all busy')
@@ -30,6 +36,12 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
             self.send_error(status_code=400, message='data not json')
             return
         print("message --> :", message)
+        if message.get("type") == "auth":
+            self.authorization(message["data"])
+        else:
+            if self.username is None:
+                self.send_error(status_code=401, message='не авторизован')
+                return
         if message.get('type') == 'hit':
             ranks = "23456789tjqka"
             suits = "dchs"
@@ -38,11 +50,7 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
             card_name = str(cards[-1][0] + cards[-1][1])
             self.send_message({"type": "hit", "message": card_name})
 
-        if message.get("type") == "auth":
-            self.authorization(message["data"])
-        else:
-            if self.username is None:
-                self.send_error(status_code=401, message='не авторизован')
+
         # for value in self.application.webSocketsPool:
         #     if value != self:
         #         print('send -->', message)

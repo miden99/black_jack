@@ -2,7 +2,7 @@ from tornado.escape import json_encode, json_decode
 
 
 class Client:
-    def __init__(self):
+    def __init__(self, id):
         self.username = None
         self.hand = []
         # self.auth = False
@@ -16,3 +16,4 @@ class Client:
             return
 
         self.send_message({"type": "auth"})
+
