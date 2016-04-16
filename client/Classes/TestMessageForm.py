@@ -6,7 +6,7 @@ import json
 
 class TestMessageForm(GUIWrapper):
     size = (300, 100)
-    visible = True
+    visible = False
 
     def __init__(self, pos, screen, ws):
         # Веб-сокет
@@ -29,6 +29,8 @@ class TestMessageForm(GUIWrapper):
         self.ws.send(json.dumps({"type": "hit"}))
 
     def event(self, e):
+        if e.type == WS_AUTH:
+            self.visible = True
         if e.type == WS_MESSAGE:
             print(e)
             self.message_field.value = e.data.get("message")

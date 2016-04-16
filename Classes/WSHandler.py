@@ -10,6 +10,7 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
     def open(self):
         """
         Вызывается при подключении нового клиента
+        Присваивание клиенту id
         """
         print('new connection')
         if len(self.application.webSocketsPool) < 2:
@@ -42,13 +43,16 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
             if self.username is None:
                 self.send_error(status_code=401, message='не авторизован')
                 return
-        if message.get('type') == 'hit':
-            ranks = "23456789tjqka"
-            suits = "dchs"
-            cards = [(s, r) for r in ranks for s in suits]
-            random.shuffle(cards)
-            card_name = str(cards[-1][0] + cards[-1][1])
-            self.send_message({"type": "hit", "message": card_name})
+        if len(self.application.webSocketsPool) < 2:
+            self.send_error(status_code=000, message="please wait")
+        else:
+            if message.get('type') == 'hit':
+                ranks = "23456789tjqka"
+                suits = "dchs"
+                cards = [(s, r) for r in ranks for s in suits]
+                random.shuffle(cards)
+                card_name = str(cards[-1][0] + cards[-1][1])
+                self.send_message({"type": "hit", "message": card_name, "id": self.id})
 
 
         # for value in self.application.webSocketsPool:
@@ -62,6 +66,9 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
     def send_message(self, message):
         for el in self.application.webSocketsPool:
             el.ws_connection.write_message(json_encode(message))
+
+    def send_message_one_user(self, message):
+        self.ws_connection.write_message(json_encode(message))
 
     def on_close(self):
         """

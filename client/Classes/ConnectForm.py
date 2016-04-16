@@ -34,6 +34,9 @@ class ConnectForm(GUIWrapper):
 
     def event(self, event):
         # print(event.type)
+        """
+
+        """
         if event.type == WS_ERROR:
             print("WS_ERROR", event.error)
             self.info_text.value = "Server is not available"

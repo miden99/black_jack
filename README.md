@@ -16,3 +16,10 @@
 
 #### 3. Install Web-socket:
     sudo pip3 install websocket-client
+    
+    
+    
+    
+    
+    //ifconfig
+    ctrl shift f
