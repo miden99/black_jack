@@ -43,10 +43,7 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
             if self.username is None:
                 self.send_error(status_code=401, message='не авторизован')
                 return
-        if len(self.application.webSocketsPool) < 2:
-            self.send_error(status_code=000, message="please wait")
-        else:
-            if message.get('type') == 'hit':
+        if message.get('type') == 'hit':
                 ranks = "23456789tjqka"
                 suits = "dchs"
                 cards = [(s, r) for r in ranks for s in suits]
@@ -69,6 +66,11 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
 
     def send_message_one_user(self, message):
         self.ws_connection.write_message(json_encode(message))
+
+    def send_message_user(self, message):
+        for el in self.application.webSocketsPool:
+            if not self.ws_connection == el.ws_connection:
+                el.ws_connection.write_message(json_encode(message))
 
     def on_close(self):
         """

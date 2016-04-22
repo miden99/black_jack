@@ -13,7 +13,8 @@ class Client:
         if data:
             print("auth data --> {}".format(data))
             self.username = data['username']
-            self.send_message_one_user({"type": "id", "message": self.id})
+            self.send_message_one_user({"type": "id", "client_id": self.id})
+            self.send_message_user({"type": "new_client", "message": self.id})
             return
 
         self.send_message({"type": "auth"})
