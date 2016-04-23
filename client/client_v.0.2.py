@@ -9,7 +9,7 @@ from client.Classes.PyMain import PyMain
 from client.Classes.LoginForm import LoginForm
 from client.Classes.ConnectForm import ConnectForm
 from client.Classes.TestMessageForm import TestMessageForm
-from client.Classes.SelectForm import SelectForm
+from Temp.SelectForm import SelectForm
 from client.ws_events import *
 
 

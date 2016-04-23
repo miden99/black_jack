@@ -44,12 +44,7 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
                 self.send_error(status_code=401, message='не авторизован')
                 return
         if message.get('type') == 'hit':
-                ranks = "23456789tjqka"
-                suits = "dchs"
-                cards = [(s, r) for r in ranks for s in suits]
-                random.shuffle(cards)
-                card_name = str(cards[-1][0] + cards[-1][1])
-                self.send_message({"type": "hit", "message": card_name, "id": self.id})
+                self.send_message({"type": "hit", "message": self.give_card(), "id": self.id})
 
 
         # for value in self.application.webSocketsPool:
