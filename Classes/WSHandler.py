@@ -1,6 +1,7 @@
 import tornado.websocket
 from tornado.escape import json_encode, json_decode
 from Classes.Client import Client
+from Classes.Deck import Deck
 import random
 
 
@@ -64,7 +65,7 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
 
     def send_message_user(self, message):
         for el in self.application.webSocketsPool:
-            if not self.ws_connection == el.ws_connection:
+            if self.ws_connection is not el.ws_connection:
                 el.ws_connection.write_message(json_encode(message))
 
     def on_close(self):
