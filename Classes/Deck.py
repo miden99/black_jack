@@ -1,5 +1,6 @@
 import random
 
+
 class Deck(object):
     """ Колода """
 
@@ -17,5 +18,5 @@ class Deck(object):
         """ Функция сдачи карты """
         card = self.cards.pop(-1)
         card_name = card[1] + card[0]
-        return card_name
+        return card[1], card[0]
 

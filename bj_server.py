@@ -4,11 +4,13 @@ import tornado.ioloop
 import tornado.web
 import socket
 from Classes.WSHandler import WSHandler
+from Classes.Deck import Deck
 
 
 class Application(tornado.web.Application):
     def __init__(self):
         self.webSocketsPool = []
+        self.deck = Deck()
 
         handlers = [
             (r'/websocket', WSHandler),
