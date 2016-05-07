@@ -50,7 +50,7 @@ class Hand(object):
         return result
 
     def __str__(self):
-        text = "%s's contains:\n" % self.name
+        text = "%s's contains:\n"
         for card in self.cards:
             text += str(card) + " "
         text += "\nHand value: " + str(self.get_value())

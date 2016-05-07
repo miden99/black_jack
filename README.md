@@ -4,21 +4,19 @@
 ### install requirements
 #### 1. Install pip:
     sudo apt-get install python3-pip
+    //Для устоновки прочих библиотек
 
-#### 2. Install pygame (on linux):
+#### 2. Install pygame (on linux)//Client:
     sudo apt-get build-dep python-pygame,
     sudo apt-get install mercurial,
     On Windows you can use the installer: http://mercurial.selenic.com/wiki/Download
-
+    
     Use pip to install PyGame:
     pip install hg+http://bitbucket.org/pygame/pygame,
     If the above gives freetype-config: not found error (on Linux), then try sudo apt-get install libfreetype6-dev and then repeat 3.
 
-#### 3. Install Web-socket:
-    sudo pip3 install websocket-client
-    
-    
-    
+#### 3. Install tornado
+    sudo pip3 install tornado
     
 #### 4.~api~
     Подключение
@@ -47,3 +45,8 @@
         Отсутствие авторизации пользователем:
         Сервер отправляет
             {"status_code": 401, "message": 'не авторизован'}
+     
+            
+    Запрос карт 
+            ({"type": "hit"})
+            

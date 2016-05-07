@@ -79,3 +79,7 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
 
     def __repr__(self):
         return "Client name: {}".format(self.username or 'unregistered')
+
+    def check_origin(self, origin):
+        return True
+

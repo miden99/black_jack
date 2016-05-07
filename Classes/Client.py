@@ -9,7 +9,6 @@ class Client:
         self.suit = None
         self.username = None
         self.hand = Hand()
-        self.card = Card()
         self.id = None
         # self.auth = False
         self.ws_connection = None
@@ -31,8 +30,8 @@ class Client:
 
     def give_card(self):
         card_name = self.deck.deal_card()
-        self.hand.add_card(card_name)
-        print(self.hand.get_value())
+        # self.hand.add_card(card_name)
+        # print(self.hand.get_value())
         return card_name
 
 
