@@ -30,9 +30,10 @@ class Client:
 
     def give_card(self):
         card_name = self.deck.deal_card()
-        # self.hand.add_card(card_name)
-        # print(self.hand.get_value())
-        return card_name
+        self.hand.add_card(card_name)
+        print(card_name)
+        print(self.hand.get_value())
+        return str(card_name)
 
 
 
