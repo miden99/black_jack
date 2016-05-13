@@ -9,7 +9,7 @@ from Classes.Deck import Deck
 
 class Application(tornado.web.Application):
     def __init__(self):
-        self.webSocketsPool = []
+        self.webSocketsPlayers = []
         self.deck = Deck()
 
         handlers = [
@@ -24,5 +24,5 @@ if __name__ == "__main__":
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(8888)
     myIP = socket.gethostbyname(socket.gethostname())
-    print('*** Websocket Server Started at %s***' + myIP)
+    print('*** Websocket Server Started at %s***' % myIP)
     tornado.ioloop.IOLoop.instance().start()

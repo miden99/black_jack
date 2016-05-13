@@ -14,14 +14,14 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
         Присваивание клиенту id
         """
         print('new connection')
-        if len(self.application.webSocketsPool) < 2:
+        if len(self.application.webSocketsPlayers) < 2:
             # self.id
-            # length = len(self.application.webSocketsPool)
-            if self.application.webSocketsPool:
-                self.id = self.application.webSocketsPool[-1].id + 1
+            # length = len(self.application.webSocketsPlayers)
+            if self.application.webSocketsPlayers:
+                self.id = self.application.webSocketsPlayers[-1].id + 1
             else:
                 self.id = 1
-            self.application.webSocketsPool.append(self)
+            self.application.webSocketsPlayers.append(self)
             self.authorization()
         else:
             self.send_error(status_code=507, message='all busy')
@@ -30,7 +30,7 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
         """
         Вызывается при получении сообщения от клиента
         """
-        print(self.application.webSocketsPool)
+        print(self.application.webSocketsPlayers)
 
         try:
             message = json_decode(message)
@@ -45,41 +45,68 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
                 self.send_error(status_code=401, message='не авторизован')
                 return
         if message.get('type') == 'hit':
-                self.send_message({"type": "hit", "message": self.give_card(), "id": self.id})
+            self.send_message({"type": "hit", "message": self.give_card(), "id": self.id})
 
 
-        # for value in self.application.webSocketsPool:
-        #     if value != self:
-        #         print('send -->', message)
-        #         value.ws_connection.write_message(message)
+            # for value in self.application.webSocketsPlayers:
+            #     if value != self:
+            #         print('send -->', message)
+            #         value.ws_connection.write_message(message)
 
     def send_error(self, status_code=500, message=''):
         self.ws_connection.write_message(json_encode({"type": "error", "status_code": status_code, "message": message}))
+        
+        # self.send_messages("Hello", extends=[self.id])
+        # self.send_messages("Hello", extends=[1, 2])
 
     def send_message(self, message):
-        for el in self.application.webSocketsPool:
-            el.ws_connection.write_message(json_encode(message))
-
-    def send_message_one_user(self, message):
+        """
+        Отправляет сообщение текущему
+        """
         self.ws_connection.write_message(json_encode(message))
 
-    def send_message_user(self, message):
-        for el in self.application.webSocketsPool:
-            if self.ws_connection is not el.ws_connection:
-                el.ws_connection.write_message(json_encode(message))
+    def send_messages(self, message, extends=[]):
+        """
+        Отправляет сообщение всем Юзерам, кроме списка исключений
+        extends: список id
+        """
+        for user in self.application.webSocketsPlayers:
+            if user.id in extends:
+                continue
+            user.ws_connection.write_message(json_encode(message))
+
+    # def send_message(self, message):
+    #     """
+    #     Отправляет сообщение всем Юзерам
+    #     """
+    #     for el in self.application.webSocketsPlayers:
+    #         el.ws_connection.write_message(json_encode(message))
+    # 
+    # def send_message_one_user(self, message):
+    #     """
+    #     Отправляет сообщение текущему
+    #     """
+    #     self.ws_connection.write_message(json_encode(message))
+    # 
+    # def send_message_user(self, message):
+    #     """
+    #     Отправляет всем, кроме текущего
+    #     """
+    #     for el in self.application.webSocketsPlayers:
+    #         if self.ws_connection is not el.ws_connection:
+    #             el.ws_connection.write_message(json_encode(message))
 
     def on_close(self):
         """
         Вызывается при отключении клиента
         """
         print('connection closed')
-        for key, value in enumerate(self.application.webSocketsPool):
+        for key, value in enumerate(self.application.webSocketsPlayers):
             if value == self:
-                del self.application.webSocketsPool[key]
+                del self.application.webSocketsPlayers[key]
 
     def __repr__(self):
         return "Client name: {}".format(self.username or 'unregistered')
 
     def check_origin(self, origin):
         return True
-
