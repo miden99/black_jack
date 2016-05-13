@@ -30,7 +30,7 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
         """
         Вызывается при получении сообщения от клиента
         """
-        print(self.application.webSocketsPlayers)
+        print("players = ", self.application.webSocketsPlayers)
 
         try:
             message = json_decode(message)
@@ -44,14 +44,34 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
             if self.username is None:
                 self.send_error(status_code=401, message='не авторизован')
                 return
+
+        if not self.in_game:
+            # TODO(+): отправить сообщение об ошибке
+            self.send_error(status_code=666, message='ход закончен')
+            return
         if message.get('type') == 'hit':
-            self.send_message({"type": "hit", "message": self.give_card(), "id": self.id})
+            self.send_message({"type": "hit", "card": self.give_card(), "id": self.id})
+            self.check_value()
 
+        elif message.get('type') == 'stand':
+            self.in_game = False
 
-            # for value in self.application.webSocketsPlayers:
-            #     if value != self:
-            #         print('send -->', message)
-            #         value.ws_connection.write_message(message)
+        if self.end_current_game():
+            # TODO: тут начинаем новую игру: тусуем колоду, очищаем руки игроков и т.д.
+            pass
+
+    def end_current_game(self):
+        # TODO: проверяет все in_game игроков
+        for player in self.application.webSocketsPlayers:
+            if player.in_game in True:
+                return
+
+        return False
+
+        # for value in self.application.webSocketsPlayers:
+        #     if value != self:
+        #         print('send -->', message)
+        #         value.ws_connection.write_message(message)
 
     def send_error(self, status_code=500, message=''):
         self.ws_connection.write_message(json_encode({"type": "error", "status_code": status_code, "message": message}))

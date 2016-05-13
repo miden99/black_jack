@@ -12,6 +12,7 @@ class Client:
         self.id = None
         self.ws_connection = None
         self.deck = None
+        self.in_game = False
 
     def set_deck(self, deck):
         self.deck = deck
@@ -23,17 +24,25 @@ class Client:
             self.username = data['username']
             self.send_message({"type": "id", "client_id": self.id})
             self.send_messages({"type": "new_client", "message": self.id}, extends=[self.id])
+            self.in_game = True
+            # TODO(в лоб): автоматически раздать две карты
+            self.send_message({"type": "hit", "message": self.give_card(), "id": self.id})
+            self.send_message({"type": "hit", "message": self.give_card(), "id": self.id})
             return
 
         self.send_messages({"type": "auth"})
+
+    def check_value(self):
+        if self.hand.get_value() > 21:
+            self.in_game = False
+    #         TODO(относительно): отправить сообщение игроку о том что у него перебор
+            self.send_message({"type": "bust"})
 
     def give_card(self):
         card_name = self.deck.deal_card()
         self.hand.add_card(card_name)
         print(card_name)
         print(self.hand.get_value())
-        if self.hand.get_value() > 21:
-            self.send_message({"type": "bust"})
 
         return str(card_name)
 
