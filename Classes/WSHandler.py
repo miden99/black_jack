@@ -2,6 +2,7 @@ import tornado.websocket
 from tornado.escape import json_encode, json_decode
 from Classes.Client import Client
 from Classes.Deck import Deck
+from Classes.Dealer import Dealer
 import random
 
 
@@ -56,14 +57,15 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
         elif message.get('type') == 'stand':
             self.in_game = False
         #
-        # if self.end_current_game():
-        #     # TODO: тут начинаем новую игру: тусуем колоду, очищаем руки игроков и т.д.
-        #     pass
+        if self.end_current_game():
+            # TODO: тут начинаем новую игру: тусуем колоду, очищаем руки игроков и т.д.
+            # while
+            print("GGG")
 
     def end_current_game(self):
         # TODO: проверяет все in_game игроков
         for player in self.application.webSocketsPlayers:
-            if player.in_game in True:
+            if player.in_game is True:
                 return False
             else:
                 return True
