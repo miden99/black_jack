@@ -26,11 +26,14 @@ class Client:
             self.send_messages({"type": "new_client", "message": self.id}, extends=[self.id])
             self.in_game = True
             # TODO(в лоб): автоматически раздать две карты
-            self.send_message({"type": "hit", "message": self.give_card(), "id": self.id})
-            self.send_message({"type": "hit", "message": self.give_card(), "id": self.id})
+            self.send_message({"type": "hit", "card": self.give_card(), "id": self.id, "points": self.hand.get_value()})
+            self.send_message({"type": "hit", "card": self.give_card(), "id": self.id, "points": self.hand.get_value()})
+            for player in self.application.webSocketsPlayers:
+                if not self.id is player.id:
+                    self.send_message({"type":"other_hands", "hand": player.hand.get_cards(), "id": player.id, "ponts": player.hand.get_value()})
             return
 
-        self.send_messages({"type": "auth"})
+        self.send_message({"type": "auth"})
 
     def check_value(self):
         if self.hand.get_value() > 21:

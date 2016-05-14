@@ -14,7 +14,7 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
         Присваивание клиенту id
         """
         print('new connection')
-        if len(self.application.webSocketsPlayers) < 2:
+        if len(self.application.webSocketsPlayers) < 3:
             # self.id
             # length = len(self.application.webSocketsPlayers)
             if self.application.webSocketsPlayers:
@@ -50,23 +50,25 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
             self.send_error(status_code=666, message='ход закончен')
             return
         if message.get('type') == 'hit':
-            self.send_message({"type": "hit", "card": self.give_card(), "id": self.id})
+            self.send_message({"type": "hit", "card": self.give_card(), "id": self.id, "points": self.hand.get_value()})
             self.check_value()
 
-        # elif message.get('type') == 'stand':
-        #     self.in_game = False
+        elif message.get('type') == 'stand':
+            self.in_game = False
         #
         # if self.end_current_game():
         #     # TODO: тут начинаем новую игру: тусуем колоду, очищаем руки игроков и т.д.
         #     pass
 
-    # def end_current_game(self):
-    #     # TODO: проверяет все in_game игроков
-    #     for player in self.application.webSocketsPlayers:
-    #         if player.in_game in True:
-    #             return
+    def end_current_game(self):
+        # TODO: проверяет все in_game игроков
+        for player in self.application.webSocketsPlayers:
+            if player.in_game in True:
+                return False
+            else:
+                return True
 
-        return False
+        return
 
         # for value in self.application.webSocketsPlayers:
         #     if value != self:
