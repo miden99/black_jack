@@ -1,22 +1,26 @@
 from Classes.Hand import *
 from Classes.Client import *
 
+
 class Dealer:
     def __init__(self, deck):
-        self.cards = []  # [Card(), Card(), ...]
+        self.rank = None
+        self.suit = None
+        self.hand_dealer = Hand()
+        self.id = "Dealer"
+        self.points = None
         self.deck = deck
 
-    @property
-    def hand_points(self):
-        return None
+    # def set_deck(self, deck):
+    #     self.deck = deck
 
-    def add_cards(self):
-        # Добавляет карту диллеру
-        card = Card(*self.deck.deal_card())
-        self.cards.append(card)
+    def check_value(self):
+            return self.hand_dealer.get_value()
 
-    # @property
-    # def dealer_step(self):
-    #     while self.cards.get_value() > 17:
-    #         self.cards.add_cards
-    #     return len(self.cards)
+    def give_card(self):
+        card_name = self.deck.deal_card()
+        self.hand_dealer.add_card(card_name)
+        self.points = self.hand_dealer.get_value()
+        # print(self.points)
+        # print(self.hand_dealer)
+        return str(card_name)

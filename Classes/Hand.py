@@ -55,9 +55,9 @@ class Hand(object):
             cards.append(card.card_name)
         return cards
 
-    # def __str__(self):
-    #     text = "%s's contains:\n"
-    #     for card in self.cards:
-    #         text += str(card) + " "
-    #     text += "\nHand value: " + str(self.get_value())
-    #     return text
+    def __str__(self):
+        text = " contains:\n"
+        for card in self.cards:
+            text += str(card) + " "
+        text += "\nHand value: " + str(self.get_value())
+        return text

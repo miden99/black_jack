@@ -1,9 +1,8 @@
 import tornado.websocket
+from Classes.Dealer import Dealer
 from tornado.escape import json_encode, json_decode
 from Classes.Client import Client
 from Classes.Deck import Deck
-from Classes.Dealer import Dealer
-import random
 
 
 # Список кодов состояния HTTP:
@@ -51,26 +50,51 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
             self.send_error(status_code=666, message='ход закончен')
             return
         if message.get('type') == 'hit':
-            self.send_message({"type": "hit", "card": self.give_card(), "id": self.id, "points": self.hand.get_value()})
+            self.send_messages({"type": "hit", "card": self.give_card(), "id": self.id, "points": self.hand.get_value()})
             self.check_value()
 
         elif message.get('type') == 'stand':
             self.in_game = False
         #
         if self.end_current_game():
+            dealer = self.application.dealer
             # TODO: тут начинаем новую игру: тусуем колоду, очищаем руки игроков и т.д.
-            # while
+            while dealer.check_value() < 17:
+                self.send_messages({"type": "hit", "card":  dealer.give_card(),
+                                    "id": dealer.id,
+                                    "points": dealer.check_value()})
+            if dealer.check_value() > 21:
+                max_result = 0
+                id_winner = 0
+                for player in self.application.webSocketsPlayers:
+                    if player.points >= max_result and player.points != 0:
+                        max_result = player.points
+                        id_winner = player
+                id_winner.send_message({"type": "winner", "id": id_winner.id})
+                id_winner.send_messages({"type": "lose"}, extends=id_winner)
+            else:
+                max_result = 0
+                id_winner = 0
+                for player in self.application.webSocketsPlayers:
+                    if player.points >= max_result and player.points != 0:
+                        max_result = player.points
+                        id_winner = player
+                if id_winner.points > dealer.points:
+                    id_winner.send_message({"type": "winner", "id": id_winner.id})
+                    id_winner.send_messages({"type": "lose"}, extends=id_winner)
+                else:
+                    id_winner.send_messages({"type": "lose"})
+
             print("GGG")
 
     def end_current_game(self):
-        # TODO: проверяет все in_game игроков
+        # TODO(~+): проверяет все in_game игроков
         for player in self.application.webSocketsPlayers:
             if player.in_game is True:
                 return False
-            else:
-                return True
 
-        return
+        return True
+
 
         # for value in self.application.webSocketsPlayers:
         #     if value != self:

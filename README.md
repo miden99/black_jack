@@ -38,13 +38,13 @@
             // {"type": "client_id", "message": <client_id>}
             {"type": "id", "client_id": <client_id>}
             Дважды:
-            {"type": "hit", "card": <card>, "id": <id>, "points": <points>}
+            {"type": "hit", "card": <card>, "id": <client__id>, "points": <points>}
             Также информацию о игроках подключившихся раньше, если таковые имеются
-            {"type":"other_hands", "hand":<карты на руке>, "id": <id руки>, "ponts": <его очки>}
+            {"type":"other_players", "hand":<карты на руке>, "id": <id присутствующего игрока>, "ponts": <его очки>}
 
     
         Сурвер отвравляет остальным(при успешной авторизации self):
-            {"type": "new_client", "message": <other_id>}
+            {"type": "new_client", "message": <id>}
     
         Ошибки возникают в случае
         Отсутствие авторизации пользователем:
@@ -65,3 +65,9 @@
 
     Для того чтобы закончить ход клиент отправляет:
         {"type": "stand"}
+        
+    В случае попеды сервер отправляет:
+        {"type": "winner", "id": <client_id_>}
+        
+    В случае проигрыша 
+    {"type": "lose"}

@@ -13,6 +13,7 @@ class Client:
         self.ws_connection = None
         self.deck = None
         self.in_game = False
+        self.points = None
 
     def set_deck(self, deck):
         self.deck = deck
@@ -26,11 +27,11 @@ class Client:
             self.send_messages({"type": "new_client", "message": self.id}, extends=[self.id])
             self.in_game = True
             # TODO(в лоб): автоматически раздать две карты
-            self.send_message({"type": "hit", "card": self.give_card(), "id": self.id, "points": self.hand.get_value()})
-            self.send_message({"type": "hit", "card": self.give_card(), "id": self.id, "points": self.hand.get_value()})
+            self.send_messages({"type": "hit", "card": self.give_card(), "id": self.id, "points": self.hand.get_value()})
+            self.send_messages({"type": "hit", "card": self.give_card(), "id": self.id, "points": self.hand.get_value()})
             for player in self.application.webSocketsPlayers:
-                if not self.id is player.id:
-                    self.send_message({"type":"other_hands", "hand": player.hand.get_cards(), "id": player.id, "ponts": player.hand.get_value()})
+                if self.id is not player.id:
+                    self.send_message({"type": "other_players", "hand": player.hand.get_cards(), "id": player.id, "points": player.hand.get_value()})
             return
 
         self.send_message({"type": "auth"})
@@ -40,13 +41,14 @@ class Client:
             self.in_game = False
     #         TODO(относительно): отправить сообщение игроку о том что у него перебор
             self.send_message({"type": "bust"})
+            self.points = 0
 
     def give_card(self):
         card_name = self.deck.deal_card()
         self.hand.add_card(card_name)
-        print(card_name)
-        print(self.hand.get_value())
-
+        # print(card_name)
+        self.points = self.hand.get_value()
+        # print(self.points, " Points")
         return str(card_name)
 
 
