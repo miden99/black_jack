@@ -23,7 +23,8 @@ class Client:
             print("auth data --> {}".format(data))
             self.set_deck(self.application.deck)
             self.username = data['username']
-            self.send_message({"type": "id", "client_id": self.id})
+            # self.send_message({"type":"username", "username":self.username})
+            self.send_message({"type": "id", "client_id": self.id, "username": self.username})
             self.send_messages({"type": "new_client", "message": self.id}, extends=[self.id])
             self.in_game = True
             # TODO(в лоб): автоматически раздать две карты
@@ -31,7 +32,7 @@ class Client:
             self.send_messages({"type": "hit", "card": self.give_card(), "id": self.id, "points": self.hand.get_value()})
             for player in self.application.webSocketsPlayers:
                 if self.id is not player.id:
-                    self.send_message({"type": "other_players", "hand": player.hand.get_cards(), "id": player.id, "points": player.hand.get_value()})
+                    self.send_message({"type": "other_players", "hand": player.hand.get_cards(), "id": player.id, "points": player.hand.get_value(), "username": player.username})
             return
 
         self.send_message({"type": "auth"})
@@ -51,5 +52,6 @@ class Client:
         # print(self.points, " Points")
         return str(card_name)
 
-
+    def check_points(self):
+        return int(self.points)
 

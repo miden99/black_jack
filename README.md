@@ -36,7 +36,7 @@
     
         Сервер отправляет self:
             // {"type": "client_id", "message": <client_id>}
-            {"type": "id", "client_id": <client_id>}
+            {"type": "id", "client_id": <client_id>, "username": <client_name>}
             Дважды:
             {"type": "hit", "card": <card>, "id": <client__id>, "points": <points>}
             Также информацию о игроках подключившихся раньше, если таковые имеются

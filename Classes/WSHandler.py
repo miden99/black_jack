@@ -2,7 +2,8 @@ import tornado.websocket
 from Classes.Dealer import Dealer
 from tornado.escape import json_encode, json_decode
 from Classes.Client import Client
-from Classes.Deck import Deck
+from Classes.Hand import Hand
+import time
 
 
 # Список кодов состояния HTTP:
@@ -65,26 +66,32 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
                                     "points": dealer.check_value()})
             if dealer.check_value() > 21:
                 max_result = 0
-                id_winner = 0
+                id_winner = self
                 for player in self.application.webSocketsPlayers:
-                    if player.points >= max_result and player.points != 0:
-                        max_result = player.points
+                    if player.check_points() >= max_result and player.check_points() != 0:
+                        max_result = player.check_points()
                         id_winner = player
-                id_winner.send_message({"type": "winner", "id": id_winner.id})
-                id_winner.send_messages({"type": "lose"}, extends=id_winner)
+                id_winner.send_messages({"type": "winner", "id": id_winner.id})
             else:
                 max_result = 0
-                id_winner = 0
+                id_winner = self
                 for player in self.application.webSocketsPlayers:
-                    if player.points >= max_result and player.points != 0:
-                        max_result = player.points
+                    if player.check_points() >= max_result and player.check_points() != 0:
+                        max_result = player.check_points()
                         id_winner = player
-                if id_winner.points > dealer.points:
-                    id_winner.send_message({"type": "winner", "id": id_winner.id})
-                    id_winner.send_messages({"type": "lose"}, extends=id_winner)
-                else:
-                    id_winner.send_messages({"type": "lose"})
-
+                    if id_winner.check_points() > dealer.check_points():
+                        id_winner.send_messages({"type": "winner", "id": id_winner.id})
+                    else:
+                        id_winner.send_messages({"type": "winner", "id": "Dealer"})
+            time.sleep(3)
+            for player in self.application.webSocketsPlayers:
+                player.hand = Hand()
+                player.in_game = True
+            self.application.restart()
+            self.send_messages({"type": "restart"})
+            for player in self.application.webSocketsPlayers:
+                self.send_messages({"type": "hit", "card": self.give_card(), "id": self.id, "points": self.hand.get_value()})
+                self.send_messages({"type": "hit", "card": self.give_card(), "id": self.id, "points": self.hand.get_value()})
             print("GGG")
 
     def end_current_game(self):
@@ -121,6 +128,7 @@ class WSHandler(tornado.websocket.WebSocketHandler, Client):
         for user in self.application.webSocketsPlayers:
             if user.id in extends:
                 continue
+
             user.ws_connection.write_message(json_encode(message))
 
     # def send_message(self, message):

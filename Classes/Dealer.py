@@ -11,9 +11,6 @@ class Dealer:
         self.points = None
         self.deck = deck
 
-    # def set_deck(self, deck):
-    #     self.deck = deck
-
     def check_value(self):
             return self.hand_dealer.get_value()
 
@@ -24,3 +21,6 @@ class Dealer:
         # print(self.points)
         # print(self.hand_dealer)
         return str(card_name)
+
+    def check_points(self):
+        return int(self.points)
